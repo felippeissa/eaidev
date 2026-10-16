@@ -55,7 +55,7 @@ type Ambiente = 'oficial' | 'sandbox';
             </p-tablist>
           </p-tabs>
           <div class="tree">
-            <app-doc-tree [documentos]="doAmbiente()" [ativoId]="ativo().id" (selecionar)="ativoId.set($event)" (criar)="criar($event)" (mover)="mover($event.id, $event.paiId)" (excluir)="excluir($event)" />
+            <app-doc-tree [documentos]="doAmbiente()" [ativoId]="ativo()?.id" (selecionar)="ativoId.set($event)" (criar)="criar($event)" (mover)="mover($event.id, $event.paiId)" (excluir)="excluir($event)" />
           </div>
         </p-card>
 
@@ -124,7 +124,7 @@ export class DocExplorer {
   protected readonly ativoId = signal<string | null>(null);
 
   protected readonly doAmbiente = computed(() => this.todos().filter((d) => d.ambiente === this.ambiente()));
-  protected readonly ativo = computed(() => this.doAmbiente().find((d) => d.id === this.ativoId()) ?? this.doAmbiente()[0]);
+  protected readonly ativo = computed<DocumentoWorkspace | undefined>(() => this.doAmbiente().find((d) => d.id === this.ativoId()) ?? this.doAmbiente()[0]);
 
   constructor() {
     effect(() => {

@@ -47,7 +47,7 @@ export type Software = {
   descricao: string;
 };
 
-export type Api = {
+export type ApiAntiga = {
   id: string;
   nome: string;
   versao: string;
@@ -64,11 +64,11 @@ export type Esteira = {
   nome: string;
   repositorio: string;
   branch: string;
-  status: "Sucesso" | "Falha" | "Executando" | "Pausado";
+  status: SituacaoPipeline;
   duracao: string;
   estagios: {
     nome: string;
-    status: "Sucesso" | "Falha" | "Executando" | "Pendente";
+    status: SituacaoPipeline;
     duracao?: string | undefined;
     responsavel?: string | undefined;
   }[];
@@ -164,7 +164,7 @@ export type GrafoDado = {
   arestas: { source: string; target: string; tipo: string }[];
 };
 
-export type GitFlowTipo = "main" | "develop" | "feature" | "release" | "hotfix";
+export type GitFlowTipo = "master" | "develop" | "feature" | "release" | "hotfix";
 
 export type EsteiraGitFlow = {
   tipo: GitFlowTipo;
@@ -426,4 +426,90 @@ export type Skill = {
   arquivos: string[];
   status: "Ativa" | "Rascunho";
   usos: number;
+};
+
+
+/* ---------- Esteiras ---------- */
+
+export type SituacaoPipeline =
+  | "Sucesso"
+  | "Falha"
+  | "Executando"
+  | "Pendente"
+  | "Agendada"
+  | "Aguardando ação manual"
+  | "Cancelada"
+  | "Ignorada";
+
+/** Esteira vinculada a um Produto, com o endereço dos pipelines no GitLab. */
+export type EsteiraCatalogo = Esteira & {
+  produtoId: string;
+  urlPipelines: string;
+};
+
+/* ---------- Catálogo de APIs ---------- */
+
+export type AmbienteApi = "Desenvolvimento" | "Homologação" | "Produção";
+
+export type MetodoHttp = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+export type ParametroApi = {
+  nome: string;
+  local: "caminho" | "consulta" | "cabeçalho";
+  tipo: string;
+  obrigatorio: boolean;
+  descricao: string;
+};
+
+export type RespostaApi = {
+  codigo: string;
+  descricao: string;
+  modelo?: string | undefined;
+  exemplo?: string | undefined;
+};
+
+export type OperacaoApi = {
+  metodo: MetodoHttp;
+  caminho: string;
+  resumo: string;
+  obsoleta?: boolean | undefined;
+  parametros: ParametroApi[];
+  corpo?: { tipoConteudo: string; modelo?: string | undefined; exemplo?: string | undefined } | undefined;
+  respostas: RespostaApi[];
+};
+
+export type ModeloDados = {
+  nome: string;
+  campos: {
+    nome: string;
+    tipo: string;
+    obrigatorio: boolean;
+    descricao: string;
+    modeloRef?: string | undefined;
+  }[];
+};
+
+export type ContratoApi = {
+  /** false = formato fora do padrão (sem a aba Documentação formatada). */
+  padrao: boolean;
+  formato: "YAML" | "JSON";
+  /** Texto original do contrato (aba Arquivo). */
+  conteudo: string;
+  resumo?: string | undefined;
+  descricao?: string | undefined;
+  servidores: { ambiente: AmbienteApi; url: string }[];
+  grupos: { nome: string; operacoes: OperacaoApi[] }[];
+  modelos: ModeloDados[];
+};
+
+/** Uma linha do catálogo: uma versão de uma API. */
+export type Api = {
+  id: string;
+  apiId: string;
+  nome: string;
+  enderecoBase: string;
+  versao: string;
+  ambientes: AmbienteApi[];
+  produtoId: string;
+  contrato: ContratoApi;
 };
