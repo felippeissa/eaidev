@@ -1,0 +1,1 @@
+import{d as o,na as n}from"./chunk-5OEIHN6B.js";function i(a){let r=n(null);return a().then(e=>r.set(e)),r.asReadonly()}function s(a){let r=n(null),e=()=>o(null,null,function*(){return r.set(yield a())});return e(),{dado:r.asReadonly(),recarregar:e}}function d(a,r=300){return new Promise(e=>setTimeout(()=>e(a),r))}export{i as a,s as b,d as c};

@@ -1,0 +1,1 @@
+var n="eai.session",r=2;function l(){if(typeof window>"u")return null;try{let o=window.localStorage.getItem(n);if(!o)return null;let e=JSON.parse(o);return e.versao!==r?(window.localStorage.removeItem(n),null):e}catch{return null}}export{l as a};
