@@ -1,10 +1,9 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { Avatar } from 'primeng/avatar';
 import { Button } from 'primeng/button';
 import { Card } from 'primeng/card';
-import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
@@ -19,7 +18,7 @@ import { carregar, carregarRecarregavel } from '../../core/carregar';
 import { PageHeader } from '../../layout/page-header.component';
 import { StatusTag } from '../../shared/status-tag.component';
 import { listarProjetos } from '@/lib/projeto-store';
-import { atualizarUsuario, convidarUsuario, excluirUsuario, listarUsuarios } from '@/lib/usuario-store';
+import { atualizarUsuario, convidarUsuario, listarUsuarios } from '@/lib/usuario-store';
 import type { Usuario } from '@/types';
 
 /** O que cada nível permite. */
@@ -30,7 +29,7 @@ const PERFIS = [
   { valor: 'Leitor', descricao: 'Consulta produtos e documentação, sem editar nada.' },
 ] as const;
 
-const SITUACOES = ['Ativo', 'Pendente', 'Inativo'] as const;
+const SITUACOES = ['Ativo', 'Inativo'] as const;
 
 const ordenar = (lista: string[]) => [...new Set(lista)].sort((a, b) => a.localeCompare(b, 'pt-BR'));
 const iniciais = (nome: string) =>
@@ -42,8 +41,7 @@ const iniciais = (nome: string) =>
 
 @Component({
   selector: 'app-usuarios',
-  imports: [FormsModule, PageHeader, StatusTag, Avatar, Button, Card, ConfirmDialog, Dialog, IconField, InputIcon, InputText, MultiSelect, Select, TableModule, Tag, Tooltip],
-  providers: [ConfirmationService],
+  imports: [FormsModule, PageHeader, StatusTag, Avatar, Button, Card, Dialog, IconField, InputIcon, InputText, MultiSelect, Select, TableModule, Tag, Tooltip],
   template: `
     <app-page-header titulo="Usuários" [trilha]="[{ label: 'Usuários' }]">
       <p-button label="Novo usuário" icon="pi pi-user-plus" (onClick)="abrirConvite()" />
@@ -67,7 +65,7 @@ const iniciais = (nome: string) =>
           <p-multiselect inputId="f-perfil" name="perfis" [options]="opcoes().perfis" [(ngModel)]="rascunho.perfis" placeholder="Todos" [showToggleAll]="false" display="chip" [fluid]="true" />
         </div>
         <div class="campo">
-          <label for="f-situacao">Situação</label>
+          <label for="f-situacao">Status</label>
           <p-multiselect inputId="f-situacao" name="situacoes" [options]="opcoes().situacoes" [(ngModel)]="rascunho.situacoes" placeholder="Todas" [showToggleAll]="false" display="chip" [fluid]="true" />
         </div>
         <div class="botoes">
@@ -84,7 +82,7 @@ const iniciais = (nome: string) =>
             <th pSortableColumn="nome">Usuário <p-sortIcon field="nome" /></th>
             <th>Produtos</th>
             <th pSortableColumn="perfil">Perfil <p-sortIcon field="perfil" /></th>
-            <th pSortableColumn="status">Situação <p-sortIcon field="status" /></th>
+            <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
             <th style="width: 7rem"><span class="so-leitor">Ações</span></th>
           </tr>
         </ng-template>
@@ -102,7 +100,6 @@ const iniciais = (nome: string) =>
             <td>
               <div class="acoes">
                 <p-button icon="pi pi-pencil" [text]="true" severity="secondary" pTooltip="Editar usuário" tooltipPosition="top" ariaLabel="Editar usuário" (onClick)="abrirEdicao(u)" />
-                <p-button icon="pi pi-trash" [text]="true" severity="danger" pTooltip="Excluir usuário" tooltipPosition="top" ariaLabel="Excluir usuário" (onClick)="confirmarExclusao(u)" />
               </div>
             </td>
           </tr>
@@ -161,7 +158,7 @@ const iniciais = (nome: string) =>
             <p-select inputId="e-perfil" name="perfil" [options]="perfisOpcoes" optionLabel="valor" optionValue="valor" [(ngModel)]="edicao.perfil" [fluid]="true" appendTo="body" />
           </div>
           <div class="campo">
-            <label for="e-status">Situação</label>
+            <label for="e-status">Status</label>
             <p-select inputId="e-status" name="status" [options]="situacoesOpcoes" [(ngModel)]="edicao.status" [fluid]="true" appendTo="body" />
           </div>
         </div>
@@ -172,7 +169,6 @@ const iniciais = (nome: string) =>
       </ng-template>
     </p-dialog>
 
-    <p-confirmdialog />
   `,
   styles: [
     `
@@ -251,7 +247,6 @@ const iniciais = (nome: string) =>
 })
 export class UsuariosPage {
   private readonly mensagens = inject(MessageService);
-  private readonly confirmacao = inject(ConfirmationService);
 
   protected readonly lista = carregarRecarregavel(() => listarUsuarios());
   /** Produtos cadastrados: é a eles que uma pessoa se vincula. */
@@ -318,7 +313,7 @@ export class UsuariosPage {
     const nome = this.convite.nome.trim();
     await convidarUsuario({ nome, email: this.convite.email.trim(), perfil: this.convite.perfil, times: this.convite.times });
     await this.lista.recarregar();
-    this.mensagens.add({ severity: 'success', summary: 'Usuário convidado com sucesso', detail: `${nome} fica pendente até aceitar o convite por e-mail.` });
+    this.mensagens.add({ severity: 'success', summary: 'Usuário convidado com sucesso', detail: `${nome} foi adicionado à plataforma.` });
     this.conviteAberto = false;
   }
 
@@ -334,21 +329,5 @@ export class UsuariosPage {
     await this.lista.recarregar();
     this.mensagens.add({ severity: 'success', summary: 'Usuário atualizado com sucesso', detail: 'As alterações valem a partir do próximo acesso da pessoa.' });
     this.emEdicao.set(null);
-  }
-
-  protected confirmarExclusao(u: Usuario): void {
-    this.confirmacao.confirm({
-      header: `Excluir ${u.nome}?`,
-      message: `${u.nome} perde o acesso à plataforma e sai da lista de usuários. Esta ação não pode ser desfeita.`,
-      acceptLabel: 'Excluir usuário',
-      rejectLabel: 'Manter usuário',
-      acceptButtonProps: { severity: 'danger' },
-      rejectButtonProps: { severity: 'secondary', outlined: true },
-      accept: async () => {
-        await excluirUsuario(u.id);
-        await this.lista.recarregar();
-        this.mensagens.add({ severity: 'success', summary: 'Usuário excluído com sucesso', detail: `${u.nome} perdeu o acesso à plataforma.` });
-      },
-    });
   }
 }

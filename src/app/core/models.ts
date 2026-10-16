@@ -1,5 +1,5 @@
 export type PerfilUsuario = 'Administrador' | 'Gestor' | 'Desenvolvedor' | 'Leitor';
-export type StatusUsuario = 'Ativo' | 'Pendente' | 'Inativo';
+export type StatusUsuario = 'Ativo' | 'Inativo';
 
 export interface Usuario {
   id: string;

@@ -125,11 +125,10 @@ export type Usuario = {
   times: string[];
   perfil: "Administrador" | "Gestor" | "Desenvolvedor" | "Leitor";
   /**
-   * Ativo: aceitou o convite e está na plataforma.
-   * Pendente: foi convidado e ainda não aceitou pelo e-mail.
+   * Ativo: está na plataforma.
    * Inativo: foi desativado ou saiu do projeto.
    */
-  status: "Ativo" | "Pendente" | "Inativo";
+  status: "Ativo" | "Inativo";
 };
 
 export type Especificacao = {

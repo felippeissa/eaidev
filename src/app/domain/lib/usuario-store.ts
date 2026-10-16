@@ -75,9 +75,8 @@ export function convidarUsuario(entrada: {
     email: entrada.email,
     times: entrada.times ?? [],
     perfil: entrada.perfil,
-    // Convidado não é ativo nem inativo: é pendente até aceitar pelo e-mail.
-    // Inativo fica reservado para quem foi desativado ou saiu do projeto.
-    status: "Pendente",
+    // Quem é convidado já entra como ativo: só existem Ativo e Inativo.
+    status: "Ativo",
   };
   gravar(STORAGE_CRIADOS, [usuario, ...lerCriados()]);
   return delay(usuario);

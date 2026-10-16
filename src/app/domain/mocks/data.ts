@@ -730,7 +730,7 @@ export const usuarios: Usuario[] = [
     email: "tiago.nunes@go.gov.br",
     times: ["Observabilidade Corporativa"],
     perfil: "Desenvolvedor",
-    status: "Pendente",
+    status: "Ativo",
   },
   {
     id: "usr-011",
@@ -766,7 +766,7 @@ export const usuarios: Usuario[] = [
     email: "henrique.salles@go.gov.br",
     times: ["Integração Expresso Pagamentos"],
     perfil: "Desenvolvedor",
-    status: "Pendente",
+    status: "Ativo",
   },
   {
     id: "usr-015",
@@ -865,7 +865,7 @@ export const usuarios: Usuario[] = [
     email: "isabela.freitas@go.gov.br",
     times: ["Portal do Servidor 3.0"],
     perfil: "Desenvolvedor",
-    status: "Pendente",
+    status: "Ativo",
   },
   {
     id: "usr-026",
@@ -910,7 +910,7 @@ export const usuarios: Usuario[] = [
     email: "andre.lacerda@go.gov.br",
     times: [],
     perfil: "Desenvolvedor",
-    status: "Pendente",
+    status: "Ativo",
   },
 ];
 
