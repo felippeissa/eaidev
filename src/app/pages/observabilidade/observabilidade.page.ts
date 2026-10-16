@@ -20,7 +20,7 @@ import { StatusTag } from '../../shared/status-tag.component';
 import { observabilidade } from '@/mocks/agentic';
 import type { ObservabilidadeAlerta, WorkflowExecucao } from '@/types';
 
-type Aba = 'visao-geral' | 'ia-modelos' | 'workflows' | 'contexto' | 'integracoes' | 'publicacoes' | 'alertas';
+type Aba = 'visao-geral' | 'ia-modelos' | 'workflows' | 'contexto' | 'publicacoes' | 'alertas';
 type Investigacao = { tipo: 'workflow'; item: WorkflowExecucao } | { tipo: 'alerta'; item: ObservabilidadeAlerta };
 type Severidade = 'success' | 'info' | 'warn' | 'danger' | 'secondary';
 
@@ -64,7 +64,6 @@ const moeda = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', curr
           <p-tab value="ia-modelos">IA e modelos</p-tab>
           <p-tab value="workflows">Workflows</p-tab>
           <p-tab value="contexto">Contexto</p-tab>
-          <p-tab value="integracoes">Integrações</p-tab>
           <p-tab value="publicacoes">Publicações</p-tab>
           <p-tab value="alertas">Alertas</p-tab>
         </p-tablist>
@@ -217,39 +216,6 @@ const moeda = (v: number) => v.toLocaleString('pt-BR', { style: 'currency', curr
                 </dl>
               </p-card>
             </div>
-          </p-tabpanel>
-
-          <!-- ===== Integrações ===== -->
-          <p-tabpanel value="integracoes">
-            <p-card>
-              <ng-template #title>
-                <span class="topo">Saúde e uso das integrações <p-button label="Abrir conectores" [outlined]="true" size="small" routerLink="/agentic/conectores" /></span>
-              </ng-template>
-              <ng-template #subtitle>Métricas operacionais; configuração e governança permanecem em Conectores.</ng-template>
-              <p-table #tInt [value]="d.integracoes" [paginator]="true" [rows]="10" [rowHover]="true" [globalFilterFields]="['nome']" [tableStyle]="{ 'min-width': '50rem' }">
-                <ng-template #caption>
-                  <p-iconfield><p-inputicon class="pi pi-search" /><input pInputText type="text" placeholder="Buscar integração" (input)="tInt.filterGlobal($any($event.target).value, 'contains')" /></p-iconfield>
-                </ng-template>
-                <ng-template #header>
-                  <tr>
-                    <th pSortableColumn="nome">Integração <p-sortIcon field="nome" /></th>
-                    <th pSortableColumn="chamadas">Chamadas <p-sortIcon field="chamadas" /></th>
-                    <th pSortableColumn="taxaSucesso">Sucesso <p-sortIcon field="taxaSucesso" /></th>
-                    <th>P50</th><th>P95</th><th>P99</th>
-                    <th pSortableColumn="falhas">Falhas <p-sortIcon field="falhas" /></th>
-                    <th pSortableColumn="status">Situação <p-sortIcon field="status" /></th>
-                  </tr>
-                </ng-template>
-                <ng-template #body let-i>
-                  <tr>
-                    <td><strong>{{ i.nome }}</strong></td><td>{{ num(i.chamadas) }}</td><td>{{ i.taxaSucesso.toFixed(1) }}%</td>
-                    <td>{{ i.p50 }}</td><td>{{ i.p95 }}</td><td>{{ i.p99 }}</td><td>{{ i.falhas }}</td>
-                    <td><p-tag [value]="i.status" [severity]="saude(i.status)" /></td>
-                  </tr>
-                </ng-template>
-              </p-table>
-              <small class="mudo bloco-texto">Alertas possíveis incluem tempo limite, limite de requisições, autenticação, indisponibilidade e ferramenta negada por política.</small>
-            </p-card>
           </p-tabpanel>
 
           <!-- ===== Publicações ===== -->

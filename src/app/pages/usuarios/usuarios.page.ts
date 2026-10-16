@@ -125,6 +125,10 @@ const iniciais = (nome: string) =>
           <input pInputText id="c-email" name="email" type="email" placeholder="nome@go.gov.br" required [(ngModel)]="convite.email" [fluid]="true" />
         </div>
         <div class="campo">
+          <label for="c-times">Produtos</label>
+          <p-multiselect inputId="c-times" name="times" [options]="opcoes().times" [(ngModel)]="convite.times" placeholder="Selecione um ou mais produtos" [filter]="true" filterPlaceholder="Buscar produto" [showToggleAll]="false" display="chip" [fluid]="true" appendTo="body" />
+        </div>
+        <div class="campo">
           <label for="c-perfil">Perfil de acesso <span class="obrig">*</span></label>
           <p-select inputId="c-perfil" name="perfil" [options]="perfisOpcoes" optionLabel="valor" optionValue="valor" [(ngModel)]="convite.perfil" [fluid]="true" appendTo="body" />
           <small class="mudo">{{ descricaoPerfil(convite.perfil) }}</small>
@@ -150,7 +154,6 @@ const iniciais = (nome: string) =>
         <div class="campo">
           <label for="e-times">Produtos</label>
           <p-multiselect inputId="e-times" name="times" [options]="opcoes().times" [(ngModel)]="edicao.times" placeholder="Selecione um ou mais produtos" [filter]="true" filterPlaceholder="Buscar produto" [showToggleAll]="false" display="chip" [fluid]="true" appendTo="body" />
-          <small class="mudo">A pessoa pode estar vinculada a mais de um produto. Pode ficar sem nenhum até ser alocada.</small>
         </div>
         <div class="duas">
           <div class="campo">
@@ -288,7 +291,7 @@ export class UsuariosPage {
   protected readonly filtrosAtivos = computed(() => this.times().length + this.perfis().length + this.situacoes().length);
 
   protected conviteAberto = false;
-  protected convite = { nome: '', email: '', perfil: 'Desenvolvedor' as Usuario['perfil'] };
+  protected convite = { nome: '', email: '', times: [] as string[], perfil: 'Desenvolvedor' as Usuario['perfil'] };
 
   protected readonly emEdicao = signal<Usuario | null>(null);
   protected edicao = { nome: '', email: '', times: [] as string[], perfil: 'Leitor' as Usuario['perfil'], status: 'Ativo' as Usuario['status'] };
@@ -307,13 +310,13 @@ export class UsuariosPage {
   }
 
   protected abrirConvite(): void {
-    this.convite = { nome: '', email: '', perfil: 'Desenvolvedor' };
+    this.convite = { nome: '', email: '', times: [], perfil: 'Desenvolvedor' };
     this.conviteAberto = true;
   }
 
   protected async convidar(): Promise<void> {
     const nome = this.convite.nome.trim();
-    await convidarUsuario({ nome, email: this.convite.email.trim(), perfil: this.convite.perfil });
+    await convidarUsuario({ nome, email: this.convite.email.trim(), perfil: this.convite.perfil, times: this.convite.times });
     await this.lista.recarregar();
     this.mensagens.add({ severity: 'success', summary: 'Usuário convidado com sucesso', detail: `${nome} fica pendente até aceitar o convite por e-mail.` });
     this.conviteAberto = false;
